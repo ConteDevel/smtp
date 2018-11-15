@@ -10,4 +10,5 @@
 6. [AutoGen](https://www.gnu.org/software/autogen/)
 7. [firedns](https://github.com/rofl0r/firedns)
 8. [libconfig](https://hyperrealm.github.io/libconfig/)
-9. [MIT License](https://opensource.org/licenses/MIT)
+9. [POSIX MQ](http://man7.org/linux/man-pages/man7/mq_overview.7.html)
+10. [MIT License](https://opensource.org/licenses/MIT)
