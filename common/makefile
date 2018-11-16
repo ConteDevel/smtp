@@ -1,4 +1,5 @@
-DIST_PATH = ../dist/libs
+DIST_PATH = ../dist
+LIB_PATH = $(DIST_PATH)/libs
 BUILD_PATH = ../build
 
 MKDIR_P = mkdir -p
@@ -11,15 +12,15 @@ FLAGS	= -std=gnu99
 CFLAGS	= -fPIC -pedantic -Wall -Werror
 LDFLAGS	= -shared
 
-LOG_SRCS = $(shell echo log/*.c)
+LOG_SRCS = log/log.c
 LOG_HEADERS = -Iinclude/log
 LOG_OBJS = $(addprefix $(BUILD_PATH)/log/, $(notdir $(LOG_SRCS:.c=.o)))
-LOG_TARGET = $(DIST_PATH)/liblog.so
+LOG_TARGET = $(LIB_PATH)/liblog.so
 
 all: dirs $(LOG_TARGET)
 
 dirs : 
-	$(MKDIR_P) $(DIST_PATH)
+	$(MKDIR_P) $(LIB_PATH)
 	$(MKDIR_P) $(BUILD_PATH)/log
 	
 $(BUILD_PATH)/log/%.o: log/%.c
@@ -28,3 +29,5 @@ $(BUILD_PATH)/log/%.o: log/%.c
 $(LOG_TARGET) : $(LOG_OBJS)
 	$(CC) $(FLAGS) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
+samples : $(BUILD_PATH)/log/main.o
+	$(CC) -L$(LIB_PATH) -Wl,-rpath=$(LIB_PATH) $(FLAGS) $(CFLAGS) -o $(DIST_PATH)/log_sample $^ -llog 
