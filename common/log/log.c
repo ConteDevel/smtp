@@ -1,31 +1,103 @@
 #include "log.h"
 
-#include <stdio.h>
+#include <stdlib.h>
+#include <fcntl.h>
+#include <sys/stat.h>
+#include <mqueue.h>
+#include <unistd.h>
 
-void log_stdout(const char lvl, const char *msg) {
-	printf("%c: %s\n", lvl, msg);
+/* Process ID */
+pid_t pid;
+/* Current log level */
+log_lvl_t cur_log_lvl;
+/* Message queue descriptor */
+mqd_t mq;
+/* Message queue attributes */
+struct mq_attr attr;
+/* Current message */
+mq_msg_t cur_msg;
+
+/* Initialize message queue listner for the child process */
+void init_listener() {
+    while (1) {
+        ssize_t len = mq_receive(mq, (char *)&cur_msg, sizeof(cur_msg), NULL);
+        if (len > 0) {
+            time_t timestamp;
+            struct tm *timeinfo;
+
+            time(&timestamp);
+            timeinfo = localtime(&timestamp);
+            FILE *f = cur_msg.level > LL_WARN ? stderr : stdout;
+
+            fprintf(f, "[%u][%02d:%02d:%02d] ", (uint32_t)timestamp,
+                                                timeinfo->tm_hour,
+                                                timeinfo->tm_min,
+                                                timeinfo->tm_sec);
+            fprintf(f, "%s\n", cur_msg.msg);
+            fflush(f);
+		    usleep(0.725 * 1e6); // TODO: Read about these magic numbers
+        }
+    }
 }
 
-void log_stderr(const char lvl, const char *msg) {
-	printf("%c: %s\n", lvl, msg);
+/* Initializes logger */
+uint32_t init_log() {
+    cur_log_lvl = LL_DEBUG;
+    // Initialize a message queue
+    attr.mq_flags = 0;
+    attr.mq_maxmsg = 10;
+    attr.mq_msgsize = sizeof(cur_msg);
+    attr.mq_curmsgs = 0;
+    mq = mq_open(MQ_NAME, O_CREAT | O_RDONLY, 0644, &attr);
+    if (mq == (mqd_t)-1) {
+        printf("Can't create a message queue\n");
+        return 1;
+    }
+    // Create a logger process
+    pid = fork();
+    if (pid == -1) {
+        printf("Can't create the logger process\n");
+        return 1; 
+    }
+    
+    if (pid == 0) {
+        init_listener(); // Listen the message queue
+    } else {
+        mq = mq_open(MQ_NAME, O_WRONLY); // Connect to the message queue
+        if (mq == (mqd_t)-1) {
+            printf("Can't connect to the message queue\n");
+            return 1;
+        }
+    }
+    
+    return 0;
 }
 
-void log_d(const char *msg) {
-    log_stdout('D', msg);
+/* Destructor */
+void __attribute__((destructor)) finish_log() {
+    if (mq == (mqd_t)-1) {
+        mq_close(mq);
+    }
 }
 
-void log_e(const char *msg) {
-    log_stderr('E', msg);
+/* Sets log level */
+void set_log_lvl(log_lvl_t lvl) {
+    cur_log_lvl = lvl;
 }
 
-void log_f(const char *msg) {
-    log_stderr('F', msg);
+/* Returns log level */
+log_lvl_t get_log_lvl() {
+    return cur_log_lvl;
 }
 
-void log_i(const char *msg) {
-    log_stdout('I', msg);
-}
-
-void log_w(const char *msg) {
-    log_stdout('W', msg);
+/* Sends log message to the message queue */
+void trace(const char *format, ...) {
+    if (pid != 0) {
+        cur_msg.level = LL_DEBUG;
+        va_list args;
+        va_start(args, format);
+        vsnprintf(cur_msg.msg, MAX_MSG_SIZE, format, args);
+        va_end(args);
+        mq_send(mq, (const char *)&cur_msg, sizeof(cur_msg), 0);
+    }
 }
