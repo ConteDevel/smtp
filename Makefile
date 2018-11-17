@@ -12,10 +12,10 @@ CC      = gcc
 AR      = ar
 FLAGS   = -std=gnu99
 CFLAGS  = -fPIC -pedantic -Wall -Werror $(ASAN)
-LDFLAGS = $(ASAN)
+LDFLAGS = $(ASAN) -lrt
 
 COMMON_HEADERS = -Icommon/include
-COMMON_SOURCES = $(shell find common -type f -name "*.c")
+COMMON_SOURCES = common/log/log.c #$(shell find common -type f -name "*.c")
 COMMON_OBJECTS = $(addprefix $(BUILD_PATH)/, $(COMMON_SOURCES:.c=.o))
 COMMON_TARGET  = $(DIST_PATH)/libcommon.a
 
@@ -31,8 +31,12 @@ build_common: dir_common $(COMMON_TARGET)
 dir_common:
 	$(MKDIR_P) $(DIST_PATH)
 	$(MKDIR_P) $(BUILD_PATH)/common
+	$(MKDIR_P) $(BUILD_PATH)/common/log
 
 $(BUILD_PATH)/common/%.o: common/%.c
+	$(CC) $(FLAGS) $(CFLAGS) $(COMMON_HEADERS) -c $< -o $@
+
+$(BUILD_PATH)/common/log/%.o: common/log/%.c
 	$(CC) $(FLAGS) $(CFLAGS) $(COMMON_HEADERS) -c $< -o $@
 
 $(COMMON_TARGET): $(COMMON_OBJECTS)

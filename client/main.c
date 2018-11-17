@@ -192,14 +192,14 @@ void do_send()
     sockets_t sockets;
     sockets_clear(&sockets);
 
-    // {
-    //     int fd = socket_open_to(SLLIT("google.com"), 80);
-    //     ASSERT(0 < fd);
-    //     socket_info_t * info = socket_info_new();
-    //     info->sended_data    = SLLIT("GET /index.html HTTP/1.1\r\n\r\n");
+    {
+        int fd = socket_open_to(SLLIT("google.com"), 80);
+        ASSERT(0 < fd);
+        socket_info_t * info = socket_info_new();
+        info->sended_data    = SLLIT("GET /index.html HTTP/1.1\r\n\r\n");
 
-    //     sockets_add(&sockets, fd, info);
-    // }
+        sockets_add(&sockets, fd, info);
+    }
 
     const int timeout = 5 * 1000;
     while (true)
@@ -296,7 +296,7 @@ void do_send()
 
 int main(int argc, char const *argv[])
 {
-    init_logs();
+    init_log();
 
     do_send();
 

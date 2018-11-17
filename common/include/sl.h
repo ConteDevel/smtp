@@ -52,7 +52,7 @@ inline sl_t sl_combine(const sl_t * lhs, const sl_t * rhs)
 
 inline sl_t sl_create(const char * format, ...)
 {
-    const uint32_t default_size = 2;
+    const uint32_t default_size = 128;
 
     uint32_t current_size = default_size;
     char *            str = (char *)malloc(current_size);

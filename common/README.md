@@ -4,7 +4,7 @@ This package contains common shared libraries for SMTP-server and client.
 
 ## Build
 
-Use command `make`, all libraries will be created in `../dist/libs`.
+Use commands `make` to build libraries and after `make samples` to build samples, all output files will be created in `../dist/libs`.
  
 ## Libraries
 
