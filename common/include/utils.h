@@ -3,5 +3,6 @@
 
 #include <libs.h>   //!< standart libs
 #include <log.h>    //!< log libs
+#include <sl.h>     //!< sl_t struct
 
 #endif // __UTILS_H__

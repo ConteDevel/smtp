@@ -25,10 +25,10 @@ void trace(const char * format, ...)
     time(&timestamp);
     timeinfo = localtime(&timestamp);
 
-    printf("[%u][%02d:%2d:%2d]", (uint32_t)timestamp,
-                                 timeinfo->tm_hour,
-                                 timeinfo->tm_min,
-                                 timeinfo->tm_sec);
+    printf("[%u][%02d:%02d:%02d] ", (uint32_t)timestamp,
+                                    timeinfo->tm_hour,
+                                    timeinfo->tm_min,
+                                    timeinfo->tm_sec);
 
     va_list args;
     va_start(args, format);

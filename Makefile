@@ -5,12 +5,14 @@ MKDIR_P = mkdir -p
 
 .PHONY: all
 
+ASAN    = -fsanitize=address
+
 SHELL   = /bin/sh
 CC      = gcc
 AR      = ar
 FLAGS   = -std=gnu99
-CFLAGS  = -fPIC -pedantic -Wall -Werror
-LDFLAGS = 
+CFLAGS  = -fPIC -pedantic -Wall -Werror $(ASAN)
+LDFLAGS = $(ASAN)
 
 COMMON_HEADERS = -Icommon/include
 COMMON_SOURCES = $(shell find common -type f -name "*.c")
@@ -47,7 +49,7 @@ $(BUILD_PATH)/client/%.o: client/%.c
 	$(CC) $(FLAGS) $(CFLAGS) $(CLIENT_HEADERS) -c $< -o $@
 
 $(CLIENT_TARGET): $(CLIENT_OBJECTS)
-	$(CC) $(FLAGS) $(CFLAGS) -o $@ $^ $(COMMON_TARGET)
+	$(CC) $(FLAGS) $(CFLAGS) -o $@ $^ $(COMMON_TARGET) $(LDFLAGS)
 
 
 clear:

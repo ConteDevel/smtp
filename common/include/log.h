@@ -26,5 +26,14 @@ void     trace        (const char * format, ...);
 #define LOG_I(...) { if (get_log_level() >= LL_INFO)    LOG("INFO:  ", ##__VA_ARGS__); }
 #define LOG_D(...) { if (get_log_level() >= LL_DEBUG)   LOG("DEBUG: ", ##__VA_ARGS__); }
 
+#define ASSERT(_condition)                                  \
+{                                                           \
+    const bool ___assert_condition_value = _condition;      \
+    if (!___assert_condition_value)                         \
+    {                                                       \
+        LOG_F("Assert triggered!");                         \
+        assert(#_condition && ___assert_condition_value);   \
+    }                                                       \
+}
 
 #endif //__LOG_H__
