@@ -18,7 +18,7 @@ typedef enum
 /* Initializes logger */
 uint32_t init_log     (void);
 /* Returns log level */
-uint32_t get_log_level(void);
+log_level_t get_log_level(void);
 /* Sets log level */
 void     set_log_level(uint32_t log_level);
 /* Sends a log message to the message queue */
