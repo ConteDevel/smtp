@@ -5,7 +5,6 @@
 
 #define MQ_NAME "/logmq"
 #define MAX_MSG_SIZE 512
-#define TIME_SIZE 20
 
 typedef enum 
 {
@@ -16,9 +15,13 @@ typedef enum
     LL_DEBUG
 } log_level_t;
 
+/* Initializes logger */
 uint32_t init_log     (void);
+/* Returns log level */
 uint32_t get_log_level(void);
+/* Sets log level */
 void     set_log_level(uint32_t log_level);
+/* Sends a log message to the message queue */
 void     trace        (const char * format, ...);
 
 #define _LOG(_label, _format, ...) trace(_label "%s:%d " _format "%s\n", __FILE__, __LINE__, __VA_ARGS__)
@@ -39,19 +42,5 @@ void     trace        (const char * format, ...);
         assert(#_condition && ___assert_condition_value);   \
     }                                                       \
 }
-
-
-
-
-// /* Initializes logger */
-// uint32_t init_log();
-
-// /* Sets log level */
-// void set_log_lvl(log_lvl_t lvl);
-// /* Returns log level */
-// log_lvl_t get_log_lvl();
-
-// /* Sends log message to the message queue */
-// void trace(const char *format, ...);
 
 #endif //__LOG_H__
