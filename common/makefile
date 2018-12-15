@@ -3,6 +3,7 @@ LIB_PATH = $(DIST_PATH)/libs
 BUILD_PATH = ../build
 
 MKDIR_P = mkdir -p
+RM_RF = rm -rf
 
 .PHONY: all
 
@@ -20,7 +21,7 @@ LOG_TARGET = $(LIB_PATH)/liblog.so
 
 all: dirs $(LOG_TARGET)
 
-dirs : 
+dirs: 
 	$(MKDIR_P) $(LIB_PATH)
 	$(MKDIR_P) $(BUILD_PATH)/log
 	
@@ -32,3 +33,8 @@ $(LOG_TARGET) : $(LOG_OBJS)
 
 samples : $(BUILD_PATH)/log/main.o
 	$(CC) -L$(LIB_PATH) -Wl,-rpath=$(LIB_PATH) $(FLAGS) $(CFLAGS) -o $(DIST_PATH)/log_sample $^ -llog -lrt
+	
+clean:
+	$(RM_RF) $(LIB_PATH)
+	$(RM_RF) $(DIST_PATH)/log_sample
+	$(RM_RF) $(BUILD_PATH)/log
