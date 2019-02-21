@@ -98,13 +98,18 @@ log_level_t get_log_level() {
 
 /* Sends log message to the message queue */
 void trace(const char *format, ...) {
-    if (pid != 0) 
-    {
-        cur_msg.level = LL_DEBUG;
-        va_list args;
-        va_start(args, format);
-        vsnprintf(cur_msg.msg, MAX_MSG_SIZE, format, args);
-        va_end(args);
-        mq_send(mq, (const char *)&cur_msg, sizeof(cur_msg), 0);
-    }
+    va_list args;
+    va_start(args, format);
+    vprintf(format, args);
+    va_end(args);
+
+    // if (pid != 0) 
+    // {
+    //     cur_msg.level = LL_DEBUG;
+    //     va_list args;
+    //     va_start(args, format);
+    //     vsnprintf(cur_msg.msg, MAX_MSG_SIZE, format, args);
+    //     va_end(args);
+    //     mq_send(mq, (const char *)&cur_msg, sizeof(cur_msg), 0);
+    // }
 }

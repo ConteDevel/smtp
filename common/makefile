@@ -11,7 +11,7 @@ SHELL	= /bin/sh
 CC		= gcc
 FLAGS	= -std=gnu99
 CFLAGS	= -fPIC -pedantic -Wall -Werror
-LDFLAGS	= -shared
+LDFLAGS	= -shared -pthread
 
 HEADERS = -Iinclude
 
