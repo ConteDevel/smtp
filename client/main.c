@@ -1,8 +1,9 @@
 #include <utils.h>
+#include "controller.h"
+#include "config.client.h"
 
 
-
-int socket_open_to(const sl_t address, uint16_t port)
+int socket_open_to_2(const sl_t address, uint16_t port)
 {
     int fd = -1;
     ASSERT(address.l);
@@ -116,11 +117,10 @@ void socket_info_delete(socket_info_t * ptr)
     free  (ptr);
 }
 
-#define SOCKETS_MAX_SIZE  128
 typedef struct 
 {
-    struct pollfd  fds  [SOCKETS_MAX_SIZE];
-    socket_info_t* infos[SOCKETS_MAX_SIZE];
+    struct pollfd  fds  [CONF_CL_SOCKETS_MAX_COUNT];
+    socket_info_t* infos[CONF_CL_SOCKETS_MAX_COUNT];
     int            fds_cnt;
     bool           need_compress;
 } sockets_t;
@@ -129,8 +129,8 @@ void sockets_clear(sockets_t * sockets)
 {
     ASSERT(sockets);
 
-    memset(sockets->fds,   0, sizeof(sockets->fds[0]) * SOCKETS_MAX_SIZE);
-    memset(sockets->infos, 0, sizeof(sockets->fds[0]) * SOCKETS_MAX_SIZE);
+    memset(sockets->fds,   0, sizeof(sockets->fds[0]) * CONF_CL_SOCKETS_MAX_COUNT);
+    memset(sockets->infos, 0, sizeof(sockets->fds[0]) * CONF_CL_SOCKETS_MAX_COUNT);
 
     sockets->fds_cnt       = 0;
     sockets->need_compress = false;
@@ -142,7 +142,7 @@ int sockets_add(sockets_t * sockets, int fd, socket_info_t * info)
     ASSERT(info);
     ASSERT(fd > 0);
 
-    if (sockets->fds_cnt >= SOCKETS_MAX_SIZE)
+    if (sockets->fds_cnt >= CONF_CL_SOCKETS_MAX_COUNT)
     {
         LOG_E("Socket was not add - already max sockets");
         return -1;
@@ -189,11 +189,13 @@ void sockets_destroy(sockets_t * ptr)
 
 void do_send()
 {
+    ASSERT(CONF_CL_NUM_WORK_THREADS > 0);
+
     sockets_t sockets;
     sockets_clear(&sockets);
 
     {
-        int fd = socket_open_to(SLLIT("google.com"), 80);
+        int fd = socket_open_to_2(SLLIT("google.com"), 80);
         ASSERT(0 < fd);
         socket_info_t * info = socket_info_new();
         info->sended_data    = SLLIT("GET /index.html HTTP/1.1\r\n\r\n");
@@ -201,7 +203,7 @@ void do_send()
         sockets_add(&sockets, fd, info);
     }
 
-    const int timeout = 5 * 1000;
+    const int timeout = CONF_CL_TIMEOUT_MSEC;
     while (true)
     {
         int rc = poll(sockets.fds, sockets.fds_cnt, timeout);
@@ -293,12 +295,27 @@ void do_send()
     sockets_destroy(&sockets);
 }
 
+controller_t controller;
+
+void sigint_handler(int dummy) 
+{
+    controller.is_worked = false;
+}
 
 int main(int argc, char const *argv[])
 {
     init_log();
 
-    do_send();
+    sl_t mail_dir = SLLIT("/home/lordneznay/smtp/maildir");
+
+    controller_init(&controller, CONF_CL_NUM_WORK_THREADS);
+
+    signal(SIGINT, sigint_handler);
+
+    controller_run(&controller, mail_dir);
+
+    controller_clear(&controller);
+    //do_send();
 
     return 0;
 }

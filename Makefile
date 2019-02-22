@@ -11,11 +11,11 @@ SHELL   = /bin/sh
 CC      = gcc
 AR      = ar
 FLAGS   = -std=gnu99
-CFLAGS  = -fPIC -pedantic -Wall -Werror $(ASAN)
-LDFLAGS = $(ASAN) -lrt
+CFLAGS  = -fPIC -pedantic -Wall -Werror -g -ggdb $(ASAN)
+LDFLAGS = $(ASAN) -lrt -lresolv
 
 COMMON_HEADERS = -Icommon/include
-COMMON_SOURCES = common/log/log.c #$(shell find common -type f -name "*.c")
+COMMON_SOURCES = common/log/log.c common/sl.c common/map.c #$(shell find common -type f -name "*.c")
 COMMON_OBJECTS = $(addprefix $(BUILD_PATH)/, $(COMMON_SOURCES:.c=.o))
 COMMON_TARGET  = $(DIST_PATH)/libcommon.a
 
@@ -38,6 +38,7 @@ $(BUILD_PATH)/common/%.o: common/%.c
 
 $(BUILD_PATH)/common/log/%.o: common/log/%.c
 	$(CC) $(FLAGS) $(CFLAGS) $(COMMON_HEADERS) -c $< -o $@
+
 
 $(COMMON_TARGET): $(COMMON_OBJECTS)
 	$(AR) rcs $@ $^

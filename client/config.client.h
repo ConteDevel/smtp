@@ -1,0 +1,10 @@
+#ifndef __CLEINT_CONFIG_CLIENT_H__
+#define __CLEINT_CONFIG_CLIENT_H__
+
+#define CONF_CL_TIMEOUT_MSEC            250
+#define CONF_CL_SOCKETS_MAX_COUNT       128
+#define CONF_CL_NUM_WORK_THREADS        1
+#define CONF_CL_UPDATE_MAILDIR_TIME_SEC 15
+#define CONF_CL_TARGET_PORT             25
+
+#endif // __CLEINT_CONFIG_CLIENT_H__

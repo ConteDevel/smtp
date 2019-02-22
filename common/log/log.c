@@ -57,13 +57,13 @@ bool init_log() {
     mq = mq_open(MQ_NAME, O_CREAT | O_RDONLY, 0644, &attr);
     if (mq == (mqd_t)-1) {
         printf("Can't create a message queue\n");
-        return FALSE;
+        return -1;
     }
     // Create a logger process
     pid = fork();
     if (pid == -1) {
         printf("Can't create the logger process\n");
-        return FALSE;
+        return -1;
     }
 
     if (pid == 0) {
@@ -72,11 +72,11 @@ bool init_log() {
         mq = mq_open(MQ_NAME, O_WRONLY); // Connect to the message queue
         if (mq == (mqd_t)-1) {
             printf("Can't connect to the message queue\n");
-            return FALSE;
+            return -1;
         }
     }
 
-    return TRUE;
+    return 0;
 }
 
 /* Destructor */

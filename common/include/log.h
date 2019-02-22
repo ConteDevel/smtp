@@ -23,7 +23,7 @@ void     set_log_level(uint32_t log_level);
 /* Sends a log message to the message queue */
 void     trace        (const char * format, ...);
 
-#define _LOG(_label, _format, ...) trace(_label "%s:%d " _format "%s\n", __FILE__, __LINE__, __VA_ARGS__)
+#define _LOG(_label, _format, ...) trace("%lu " _label "%s:%d " _format "%s\n", (unsigned long)pthread_self(), __FILE__, __LINE__, __VA_ARGS__)
 
 #define LOG(...) _LOG(__VA_ARGS__, "")
 #define LOG_F(...) { if (get_log_level() >= LL_FATAL)   LOG("FATAL: ", ##__VA_ARGS__); }
