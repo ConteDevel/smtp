@@ -1,4 +1,4 @@
-#include "utils.h"
+#include "pch.h"
 
 int main() {
 	if (init_log()) {
@@ -6,6 +6,6 @@ int main() {
 		return 1;
 	}
     LOG_W("Hello, world!");
-    
+
     return 0;
 }

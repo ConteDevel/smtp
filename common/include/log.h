@@ -6,8 +6,7 @@
 #define MQ_NAME "/logmq"
 #define MAX_MSG_SIZE 512
 
-typedef enum 
-{
+typedef enum {
     LL_FATAL = 0,
     LL_ERROR,
     LL_WARNING,
@@ -16,7 +15,7 @@ typedef enum
 } log_level_t;
 
 /* Initializes logger */
-uint32_t init_log     (void);
+bool init_log     (void);
 /* Returns log level */
 log_level_t get_log_level(void);
 /* Sets log level */

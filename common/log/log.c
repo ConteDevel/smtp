@@ -47,7 +47,7 @@ void init_listener() {
 }
 
 /* Initializes logger */
-uint32_t init_log() {
+bool init_log() {
     cur_log_lvl = LL_DEBUG;
     // Initialize a message queue
     attr.mq_flags = 0;
@@ -57,33 +57,31 @@ uint32_t init_log() {
     mq = mq_open(MQ_NAME, O_CREAT | O_RDONLY, 0644, &attr);
     if (mq == (mqd_t)-1) {
         printf("Can't create a message queue\n");
-        return 1;
+        return FALSE;
     }
     // Create a logger process
     pid = fork();
     if (pid == -1) {
         printf("Can't create the logger process\n");
-        return 1; 
+        return FALSE;
     }
-    
+
     if (pid == 0) {
         init_listener(); // Listen the message queue
     } else {
         mq = mq_open(MQ_NAME, O_WRONLY); // Connect to the message queue
         if (mq == (mqd_t)-1) {
             printf("Can't connect to the message queue\n");
-            return 1;
+            return FALSE;
         }
     }
-    
-    return 0;
+
+    return TRUE;
 }
 
 /* Destructor */
 void __attribute__((destructor)) finish_log() {
-    if (mq == (mqd_t)-1) {
-        mq_close(mq);
-    }
+    if (mq == (mqd_t)-1) { mq_close(mq); }
 }
 
 /* Sets log level */
@@ -98,8 +96,7 @@ log_level_t get_log_level() {
 
 /* Sends log message to the message queue */
 void trace(const char *format, ...) {
-    if (pid != 0) 
-    {
+    if (pid != 0) {
         cur_msg.level = LL_DEBUG;
         va_list args;
         va_start(args, format);
