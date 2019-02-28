@@ -5,6 +5,12 @@
 #include "checkopt.h"
 
 #include <libconfig.h>
+#include <unistd.h>     /* access */
+
+#define CONFIG_ADDRESS "address"
+#define CONFIG_PORT "port"
+#define CONFIG_JOBS "jobs"
+#define CONFIG_MAILDIR "maildir"
 
 typedef struct settings {
     char *address;
@@ -13,6 +19,11 @@ typedef struct settings {
     char *maildir;
 } settings_t;
 
-int load_settings(settings_t *settings, int argc, char **argv);
+/* Loads server settigns */
+int settings_init(settings_t *settings, int argc, char **argv);
+/* Releases settigns */
+void settings_destroy(settings_t *settings);
+
+void settings_log(settings_t *settings);
 
 #endif // __SETTINGS_H__
