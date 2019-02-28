@@ -6,6 +6,8 @@
 #include <mqueue.h>
 #include <unistd.h>
 
+#define STOP_SIG "!>kill"
+
 /* Message */
 typedef struct mq_msg {
     log_level_t level;
@@ -28,6 +30,9 @@ void init_listener() {
     while (1) {
         ssize_t len = mq_receive(mq, (char *)&cur_msg, sizeof(cur_msg), NULL);
         if (len > 0) {
+            // Check stop signal
+            if (strcmp(STOP_SIG, cur_msg.msg) == 0) { exit(EXIT_SUCCESS); }
+            
             time_t timestamp;
             struct tm *timeinfo;
 
@@ -82,6 +87,11 @@ bool init_log() {
 /* Destructor */
 void __attribute__((destructor)) finish_log() {
     if (mq == (mqd_t)-1) { mq_close(mq); }
+    if (pid > 0) { 
+        memset(cur_msg.msg, 0, sizeof(cur_msg.msg));
+        strcpy(cur_msg.msg, STOP_SIG);
+        mq_send(mq, (const char *)&cur_msg, sizeof(cur_msg), 0);
+    }
 }
 
 /* Sets log level */

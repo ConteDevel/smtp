@@ -29,9 +29,9 @@ int main(int argc, char **argv) {
         exit(EXIT_FAILURE);
 	}
 	
-	while (1) {
+	//while (1) {
         LOG_W("Hello, world!");
-    }
+    //}
     
     shutdown_server(EXIT_SUCCESS);
 }

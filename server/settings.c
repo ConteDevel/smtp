@@ -6,8 +6,8 @@ int load_settings(settings_t *settings, int argc, char **argv) {
     settings->jobs = 1;
     settings->maildir = MAILDIR;
 
-    tOptions opts;
-    optionProcess(&opts, argc, argv);
+    //tOptions opts;
+    //optionProcess(&opts, argc, argv);
 
     return 0;
 }
