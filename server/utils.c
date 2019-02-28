@@ -7,7 +7,7 @@ int _strrpl(const char *src, char **dst) {
         memset(*dst, '\0', strlen(*dst));
     } else {
         char *old = *dst;
-        *dst = (char *)malloc(strlen(src) * sizeof(char));
+        *dst = (char *)malloc((strlen(src) + 1) * sizeof(char));
         if (!(*dst)) {
             *dst = old; 
             return -1; 

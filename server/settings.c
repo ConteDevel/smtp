@@ -36,14 +36,10 @@ int load_config(settings_t *settings) {
 
 /* Loads server settigns */
 int settings_init(settings_t *settings, int argc, char **argv) {
-    settings->address = calloc(strlen(SERVER_ADDR), sizeof(char));
-    if (!settings->address) { return -1; }
-    settings->address = strcpy(settings->address, SERVER_ADDR);
+    if (_strrpl(SERVER_ADDR, &settings->address)) { return -1; }
     settings->port = SERVER_PORT;
     settings->jobs = 1;
-    settings->maildir = calloc(strlen(MAILDIR), sizeof(char));
-    if (!settings->maildir) { return -1; }
-    settings->maildir = strcpy(settings->maildir, MAILDIR);
+    if (_strrpl(MAILDIR, &settings->maildir)) { return -1; }
 
     //tOptions opts;
     //optionProcess(&opts, argc, argv);
@@ -62,7 +58,7 @@ void settings_destroy(settings_t *settings) {
     }
 }
 
-void settings_log(settings_t *settings) {
+void settings_log(const settings_t *settings) {
     if (settings) {
         LOG_I("Configuration { address: '%s:%d', jobs: %d, maildir: '%s'}",
             settings->address, settings->port, 

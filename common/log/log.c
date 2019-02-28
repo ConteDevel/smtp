@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <fcntl.h>
 #include <sys/stat.h>
+#include <sys/wait.h> 
 #include <mqueue.h>
 #include <unistd.h>
 
@@ -84,14 +85,19 @@ bool init_log() {
     return 0;
 }
 
-/* Destructor */
-void __attribute__((destructor)) finish_log() {
+void shutdown_log() {
     if (mq == (mqd_t)-1) { mq_close(mq); }
     if (pid > 0) { 
         memset(cur_msg.msg, 0, sizeof(cur_msg.msg));
         strcpy(cur_msg.msg, STOP_SIG);
         mq_send(mq, (const char *)&cur_msg, sizeof(cur_msg), 0);
+        wait(NULL);
     }
+}
+
+/* Destructor */
+void __attribute__((destructor)) finish_log() {
+    // shutdown_log();
 }
 
 /* Sets log level */

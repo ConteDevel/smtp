@@ -7,6 +7,11 @@
 #include <libconfig.h>
 #include <unistd.h>     /* access */
 
+#define SERVER_ADDR "127.0.0.1"
+#define SERVER_PORT 587
+#define SERVER_CONFIG "server.conf"
+#define MAILDIR "maildir"
+
 #define CONFIG_ADDRESS "address"
 #define CONFIG_PORT "port"
 #define CONFIG_JOBS "jobs"
@@ -24,6 +29,6 @@ int settings_init(settings_t *settings, int argc, char **argv);
 /* Releases settigns */
 void settings_destroy(settings_t *settings);
 
-void settings_log(settings_t *settings);
+void settings_log(const settings_t *settings);
 
 #endif // __SETTINGS_H__

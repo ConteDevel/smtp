@@ -19,25 +19,32 @@ int make_address_reusable(int sock) {
 }
 
 /* Creates a new TCP-socket to listen incomming connections */
-int make_socket(int *sock)
+int socket_init(int *sock, const char *address, const int port)
 {
     /* Initialize TCP-socket */
     *sock = socket(AF_INET, SOCK_STREAM, 0);
     if (*sock < 0) {
-        LOG_F("socket()");
+        LOG_F("Can't create socket");
         return -1;
     }
     /* Make socket address reusable */
     if (make_address_reusable(*sock)) {
-        LOG_F("make_address_reusable()\n");
+        LOG_F("Can't make address reusable\n");
+        return -1;
+    }
+    /* Set socket to be non-blocking */
+    int on = 1;
+    if (ioctl(*sock, FIONBIO, (char *)&on)) {
+        LOG_F("Can't switch socket to be non-blocking");
+        close(*sock);
         return -1;
     }
     /* Setup address */
     struct sockaddr_in addr;
     memset(&addr, 0, sizeof(addr));
     addr.sin_family = AF_INET;
-    addr.sin_addr.s_addr = inet_addr(SERVER_ADDR);
-    addr.sin_port = htons(SERVER_PORT);
+    addr.sin_addr.s_addr = inet_addr(address);
+    addr.sin_port = htons(port);
     if (addr.sin_addr.s_addr == INADDR_NONE) {
         LOG_F("inet_addr()");
         return -1;

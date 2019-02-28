@@ -16,6 +16,8 @@ typedef enum {
 
 /* Initializes logger */
 bool init_log     (void);
+/* Shuts down logger */
+void shutdown_log();
 /* Returns log level */
 log_level_t get_log_level(void);
 /* Sets log level */

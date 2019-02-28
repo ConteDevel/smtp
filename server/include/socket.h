@@ -3,6 +3,7 @@
 
 #include "pch.h"
 
+#include <sys/ioctl.h>  /* ioctl, FIONBIO */
 #include <sys/types.h>  /* some BSD implementations require it */
 #include <sys/socket.h> /* socket, setsockopt */
 #include <netinet/in.h> /* super set of <arpa/inet.h> */
@@ -11,6 +12,6 @@
 #define MAX_CLIENTS SOMAXCONN
 
 /* Creates a new TCP-socket to listen incomming connections */
-int make_socket(int *sock);
+int socket_init(int *sock, const char *address, const int port);
 
 #endif //__SOCKET_H__
