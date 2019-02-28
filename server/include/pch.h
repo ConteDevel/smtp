@@ -1,7 +1,14 @@
-#include "utils.h"
+#ifndef __PCH_H__
+#define __PCH_H__
 
-#include <sys/ioctl.h>
-#include <sys/poll.h>
-#include <sys/time.h>
-#include <netinet/in.h>
+#include "log.h"
 
+#include <stdio.h>
+#include <string.h>
+
+#define SERVER_ADDR "127.0.0.1"
+#define SERVER_PORT 587
+
+#define TIMEOUT (3 * 60 * 1000)
+
+#endif //__PCH_H__
