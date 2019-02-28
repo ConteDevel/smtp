@@ -9,9 +9,17 @@ flag = {
     value       = a;
     arg-type    = string;
     max         = 1;
-    stack-arg;
     descrip     = "Set listening IP address";
     doc         = 'IP address to bind with server';
+};
+
+flag = {
+    name        = maildir;
+    value       = m;
+    arg-type    = string;
+    max         = 1;
+    descrip     = "Set a path to mail directory";
+    doc         = 'Mail directory path';
 };
 
 flag = {

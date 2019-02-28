@@ -15,9 +15,9 @@ MV = mv -f
 SHELL	= /bin/sh
 CC		= gcc
 FLAGS	= -std=gnu99
-CFLAGS	= -fPIC -pedantic -Wall -Werror
-GEN_CFLAGS	= -g -DTEST_${BASE} `autoopts-config cflags`
+GEN_CFLAGS	= -g -DTEST_SERVER `autoopts-config cflags`
 GEN_LDFLAGS	= `autoopts-config ldflags`
+CFLAGS	= -fPIC -pedantic -Wall -Werror $(GEN_CFLAGS)
 LDFLAGS	= -llog -lrt -lconfig $(GEN_LDFLAGS)
 
 HEADERS = -Iinclude -I../common/include -I$(GEN_PATH)
@@ -36,7 +36,7 @@ gen:
 	$(MV) checkopt.c checkopt.h $(GEN_PATH)
 
 $(BUILD_PATH)/checkopt.o:
-	$(CC) $(GEN_CFLAGS) $(HEADERS) -c $(GEN_PATH)/checkopt.c -o $(BUILD_PATH)/checkopt.o
+	$(CC) $(FLAGS) $(CFLAGS) $(HEADERS) -c $(GEN_PATH)/checkopt.c -o $(BUILD_PATH)/checkopt.o
  	
 $(BUILD_PATH)/%.o: %.c
 	$(CC) $(FLAGS) $(CFLAGS) $(HEADERS) -c $< -o $@
