@@ -6,6 +6,6 @@
 
 #include <stdio.h>
 
-#define TIMEOUT (3 * 60 * 1000)
+#define MAX_CLIENTS SOMAXCONN
 
 #endif //__PCH_H__

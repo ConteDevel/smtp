@@ -9,8 +9,6 @@
 #include <netinet/in.h> /* super set of <arpa/inet.h> */
 #include <arpa/inet.h>  /* inet_addr */
 
-#define MAX_CLIENTS SOMAXCONN
-
 /* Creates a new TCP-socket to listen incomming connections */
 int socket_init(int *sock, const char *address, const int port);
 

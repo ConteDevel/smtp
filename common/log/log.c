@@ -2,6 +2,7 @@
 
 #include <stdlib.h>
 #include <fcntl.h>
+#include <signal.h>
 #include <sys/stat.h>
 #include <sys/wait.h> 
 #include <mqueue.h>
@@ -73,6 +74,7 @@ bool init_log() {
     }
 
     if (pid == 0) {
+        signal(SIGINT, SIG_IGN); // Ignore SIGINT
         init_listener(); // Listen the message queue
     } else {
         mq = mq_open(MQ_NAME, O_WRONLY); // Connect to the message queue
@@ -86,13 +88,13 @@ bool init_log() {
 }
 
 void shutdown_log() {
-    if (mq == (mqd_t)-1) { mq_close(mq); }
     if (pid > 0) { 
         memset(cur_msg.msg, 0, sizeof(cur_msg.msg));
         strcpy(cur_msg.msg, STOP_SIG);
         mq_send(mq, (const char *)&cur_msg, sizeof(cur_msg), 0);
         wait(NULL);
     }
+    if (mq == (mqd_t)-1) { mq_close(mq); }
 }
 
 /* Destructor */
