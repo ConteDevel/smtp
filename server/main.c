@@ -41,14 +41,12 @@ void shutdown_server(int status) {
 }
 
 /* Handles signals */
-void handle_signal_action(int signo)
-{
+void handle_signal_action(int signo) {
     gotsig = 1;
 }
 
 /** Subscribes to events when thread was terminated or no reader of the pipe **/
-int setup_signals()
-{
+int setup_signals() {
     struct sigaction sa = {0};
     sa.sa_handler = handle_signal_action;
 	//sa.sa_flags = 0;
